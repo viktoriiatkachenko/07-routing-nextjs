@@ -1,10 +1,11 @@
 import axios from 'axios';
-import type { Note, NoteTag } from '../types/note';
+import type { Note, NoteTag } from '../../types/note';
 
 const BASE_URL = 'https://notehub-public.goit.study/api';
+
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN as string;
 
-const noteHubApi = axios.create({
+const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     Authorization: `Bearer ${token}`,
@@ -23,12 +24,6 @@ export interface FetchNotesResponse {
   totalPages: number;
 }
 
-export interface CreateNoteParams {
-  title: string;
-  content: string;
-  tag: NoteTag;
-}
-
 export const fetchNotes = async ({
   page,
   perPage,
@@ -37,32 +32,28 @@ export const fetchNotes = async ({
 }: FetchNotesParams): Promise<FetchNotesResponse> => {
   const params: FetchNotesParams = { page, perPage };
 
-  if (search?.trim()) {
-    params.search = search.trim();
-  }
+  if (search?.trim()) params.search = search.trim();
+  if (tag) params.tag = tag;
 
-  if (tag) {
-    params.tag = tag;
-  }
-
-  const response = await noteHubApi.get<FetchNotesResponse>('/notes', {
-    params,
-  });
-
-  return response.data;
+  const res = await api.get<FetchNotesResponse>('/notes', { params });
+  return res.data;
 };
 
-export const createNote = async (newNote: CreateNoteParams): Promise<Note> => {
-  const response = await noteHubApi.post<Note>('/notes', newNote);
-  return response.data;
+export const createNote = async (data: {
+  title: string;
+  content: string;
+  tag: NoteTag;
+}): Promise<Note> => {
+  const res = await api.post<Note>('/notes', data);
+  return res.data;
 };
 
 export const deleteNote = async (id: string): Promise<Note> => {
-  const response = await noteHubApi.delete<Note>(`/notes/${id}`);
-  return response.data;
+  const res = await api.delete<Note>(`/notes/${id}`);
+  return res.data;
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  const response = await noteHubApi.get<Note>(`/notes/${id}`);
-  return response.data;
+  const res = await api.get<Note>(`/notes/${id}`);
+  return res.data;
 };
