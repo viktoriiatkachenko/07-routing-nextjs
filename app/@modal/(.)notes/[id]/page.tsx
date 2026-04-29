@@ -4,13 +4,11 @@ import { makeQueryClient } from '../../../../lib/queryClient';
 import NotePreview from '../../../../components/NotePreview/NotePreview';
 
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
 export default async function Page({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const queryClient = makeQueryClient();
 
