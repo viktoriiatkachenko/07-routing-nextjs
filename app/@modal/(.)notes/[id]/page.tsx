@@ -3,14 +3,15 @@ import { fetchNoteById } from '../../../../lib/api/serverApi';
 import { makeQueryClient } from '../../../../lib/queryClient';
 import NotePreview from '../../../../components/NotePreview/NotePreview';
 
-interface NoteModalPageProps {
-  params: Promise<{
+interface PageProps {
+  params: {
     id: string;
-  }>;
+  };
 }
 
-export default async function NoteModalPage({ params }: NoteModalPageProps) {
-  const { id } = await params;
+export default async function Page({ params }: PageProps) {
+  const { id } = params;
+
   const queryClient = makeQueryClient();
 
   await queryClient.prefetchQuery({
